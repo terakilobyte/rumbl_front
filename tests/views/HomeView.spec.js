@@ -18,6 +18,13 @@ function shallowRenderWithProps (props = {}) {
   return shallowRender(<HomeView {...props} />);
 }
 
+// Helper function to select specific components
+function filterComponent (name) {
+  return function (elem) {
+    return elem.textContent.match(name);
+  };
+}
+
 describe('(View) Home', function () {
   let _component, _rendered, _props, _spies;
 
@@ -25,7 +32,8 @@ describe('(View) Home', function () {
     _spies = {};
     _props = {
       actions : bindActionCreators({
-        increment : (_spies.increment = sinon.spy())
+        increment : (_spies.increment = sinon.spy()),
+        decrement : (_spies.decrement = sinon.spy())
       }, _spies.dispatch = sinon.spy())
     };
 
@@ -61,17 +69,32 @@ describe('(View) Home', function () {
   });
 
   it('Should render an "Increment" button.', function () {
-    const btn = TestUtils.findRenderedDOMComponentWithTag(_rendered, 'button');
+    const incBtn = TestUtils.scryRenderedDOMComponentsWithTag(_rendered, 'button')
+            .filter(filterComponent(/Increment/)).pop();
 
-    expect(btn).to.exist;
-    expect(btn.textContent).to.match(/Increment/);
+    expect(incBtn).to.exist;
   });
 
   it('Should dispatch an action when "Increment" button is clicked.', function () {
-    const btn = TestUtils.findRenderedDOMComponentWithTag(_rendered, 'button');
+    const incBtn = TestUtils.scryRenderedDOMComponentsWithTag(_rendered, 'button')
+            .filter(filterComponent(/Increment/)).pop();
 
     _spies.dispatch.should.have.not.been.called;
-    TestUtils.Simulate.click(btn);
+    TestUtils.Simulate.click(incBtn);
+    _spies.dispatch.should.have.been.called;
+  });
+
+  it('Should render a "Decrement" button.', () => {
+    const decBtn = TestUtils.scryRenderedDOMComponentsWithTag(_rendered, 'button')
+            .filter(filterComponent(/Decrement/)).pop();
+    expect(decBtn).to.exist;
+  });
+
+  it('Should dispatch an action when "Decrement" button is clicked.', () => {
+    const decBtn = TestUtils.scryRenderedDOMComponentsWithTag(_rendered, 'button')
+            .filter(filterComponent(/Decrement/)).pop();
+    _spies.dispatch.should.have.not.been.called;
+    TestUtils.Simulate.click(decBtn);
     _spies.dispatch.should.have.been.called;
   });
 });

@@ -30,6 +30,13 @@ export class HomeView extends React.Component {
                 onClick={this.props.actions.increment}>
           Increment
         </button>
+<<<<<<< 1a9fc9a32fa17d75fcb89a65073df465b7a86a3f
+=======
+        <button className='btn btn-default'
+                onClick={this.props.actions.decrement}>
+          Decrement
+        </button>
+>>>>>>> Initial Commit
       </div>
     );
   }
